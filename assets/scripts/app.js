@@ -6,14 +6,20 @@ const addMovieModalAddButton = addMovieModalCancelButton.nextElementSibling;
 const userMovieInputs = addMovieModal.querySelectorAll("input");
 const defaultTextBox = document.getElementById("entry-text");
 const moviesList = document.getElementById("movie-list");
+const deleteConfirmModal = document.getElementById("delete-modal");
+const deleteConfirmModalCancel = deleteConfirmModal.querySelector(".btn.btn--passive");
+const deleteConfirmModalYes = deleteConfirmModal.querySelector(".btn.btn--danger");
+
 const movies = [];
 
-const toggleBackdrop = () => backdrop.classList.toggle("visible");
+const makeBackdropVisible = () => backdrop.classList.add("visible");
+
+const makeBackdropInvisible = () => backdrop.classList.remove("visible");
 
 
 const toggleMovieModal = () => {
     addMovieModal.classList.toggle("visible")
-    toggleBackdrop();
+    backdrop.classList.toggle("visible");
 }
 
 const backdropClickHandler = () => toggleMovieModal();
@@ -78,7 +84,8 @@ const renderNewMovieElement = (movie) => {
             <p>${movie.rating}/5 stars</p>
         </div>
     `;
-    listElement.addEventListener("click", removeMovieElement.bind(this, listElement));
+    // listElement.addEventListener("click", removeMovieElement.bind(this, listElement));
+    listElement.addEventListener("click", deleteConfirmModalHandler.bind(null, listElement));
     moviesList.append(listElement);
 }
 
@@ -87,6 +94,22 @@ const removeMovieElement = (movieElement) => {
     movies.pop();
     updateUI();
 }
+
+const deleteConfirmModalHandler = (movieElement) => {
+    deleteConfirmModal.classList.add("visible");
+    makeBackdropVisible();
+    
+    deleteConfirmModalYes.addEventListener("click", () => {
+        removeMovieElement(movieElement);
+        deleteConfirmModal.classList.remove("visible");
+        makeBackdropInvisible();
+    });
+};
+
+deleteConfirmModalCancel.addEventListener("click", () => {
+    deleteConfirmModal.classList.remove("visible");
+    makeBackdropVisible();
+});
 
 startAddMovieButton.addEventListener("click", toggleMovieModal)
 backdrop.addEventListener("click", backdropClickHandler)
